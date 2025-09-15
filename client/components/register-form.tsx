@@ -1,14 +1,15 @@
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
 
 type RegisterFormProps = React.ComponentProps<"div"> & {
@@ -17,33 +18,45 @@ type RegisterFormProps = React.ComponentProps<"div"> & {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onSubmit: (e: React.FormEvent) => void;
     loading?: boolean;
+    role: string;
+    isVerify: boolean;
+    isTerms: boolean;
+    setIsVerify: (val: boolean) => void;
+    setIsTerms: (val: boolean) => void;
 };
 
 export function RegisterForm({
-                               className,
-                               role,
-                               form,
-                               errors,
-                               onChange,
-                               onSubmit,
-                               loading = false,
-                               ...props
-                          }: RegisterFormProps) {
+                                 className,
+                                 role,
+                                 form,
+                                 errors,
+                                 onChange,
+                                 onSubmit,
+                                 loading = false,
+                                 isVerify,
+                                 isTerms,
+                                 setIsVerify,
+                                 setIsTerms,
+                                 ...props
+                             }: RegisterFormProps) {
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle className="text-xl">Welcome {role}</CardTitle>
-                    <CardDescription>
-                         Sign up with your Google account
-                    </CardDescription>
+                    <CardDescription>Sign up with your Google account</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={onSubmit}>
                         <div className="grid gap-6">
+                            {/* Google Button */}
                             <div className="flex flex-col gap-4">
                                 <Button variant="outline" className="w-full cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        className="h-5 w-5"
+                                    >
                                         <path
                                             d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
                                             fill="currentColor"
@@ -52,12 +65,17 @@ export function RegisterForm({
                                     Sign up with Google
                                 </Button>
                             </div>
+
+                            {/* Divider */}
                             <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
                   Or continue with
                 </span>
                             </div>
+
+                            {/* Inputs */}
                             <div className="grid gap-6">
+                                {/* Username */}
                                 <div className="grid gap-3">
                                     <Label htmlFor="username">Username</Label>
                                     <Input
@@ -67,12 +85,13 @@ export function RegisterForm({
                                         placeholder="Enter Username"
                                         value={form.username}
                                         onChange={onChange}
-                                        required
                                     />
                                     {errors.username && (
                                         <p className="text-red-500 text-sm">{errors.username}</p>
                                     )}
                                 </div>
+
+                                {/* Email */}
                                 <div className="grid gap-3">
                                     <Label htmlFor="email">Email</Label>
                                     <Input
@@ -82,49 +101,89 @@ export function RegisterForm({
                                         placeholder="m@example.com"
                                         value={form.email}
                                         onChange={onChange}
-                                        required
                                     />
-                                    {errors.username && (
+                                    {errors.email && (
                                         <p className="text-red-500 text-sm">{errors.email}</p>
                                     )}
                                 </div>
+
+                                {/* Password */}
                                 <div className="grid gap-3">
-                                    <div className="flex items-center">
-                                        <Label htmlFor="password">Password</Label>
-                                        <a
-                                            href="#"
-                                            className="ml-auto text-sm underline-offset-4 hover:underline"
-                                        >
-                                            Forgot your password?
-                                        </a>
-                                    </div>
+                                    <Label htmlFor="password">Password</Label>
                                     <Input
                                         id="password"
                                         name="password"
                                         type="password"
                                         value={form.password}
                                         onChange={onChange}
-                                        required />
+                                    />
                                     {errors.password && (
                                         <p className="text-red-500 text-sm">{errors.password}</p>
                                     )}
                                 </div>
-                                <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+
+                                {/* Verify Account Checkbox */}
+                                <div className="flex items-center gap-3">
+                                    <Checkbox
+                                        id="verify"
+                                        checked={isVerify}
+                                        onCheckedChange={(val) => setIsVerify(!!val)}
+                                    />
+                                    <Label htmlFor="verify">Verify and Sign up Account</Label>
+                                </div>
+
+                                <div>
+                                    <div className="flex items-start gap-3 mb-2">
+                                        <Checkbox
+                                            id="terms"
+                                            checked={isTerms}
+                                            onCheckedChange={(val) => setIsTerms(!!val)}
+                                        />
+                                        <Label htmlFor="terms">Accept Terms and Conditions</Label>
+                                    </div>
+                                    {errors.terms && (
+                                        <p className="text-red-500 text-sm">{errors.terms}</p>
+                                    )}
+                                </div>
+
+                                <Button
+                                    type="submit"
+                                    className="w-full cursor-pointer"
+                                    disabled={loading}
+                                >
                                     {loading ? (
                                         <div className="flex items-center justify-center gap-2">
-                                            <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                                            <svg
+                                                className="animate-spin h-4 w-4 text-white"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <circle
+                                                    className="opacity-25"
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="currentColor"
+                                                    strokeWidth="4"
+                                                />
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                                />
                                             </svg>
-                                            Signing up...
+                                            {isVerify ? "OTP Sending..." : "Signing up..."}
                                         </div>
                                     ) : (
                                         "Register"
                                     )}
                                 </Button>
                             </div>
+
                             <div className="text-center text-sm">
-                                Don&apos;t have an account?{" "}
-                                <a href="#" className="underline underline-offset-4">
+                                Already have an account?{" "}
+                                <a href="/login" className="underline underline-offset-4">
                                     Login
                                 </a>
                             </div>
@@ -132,10 +191,19 @@ export function RegisterForm({
                     </form>
                 </CardContent>
             </Card>
-            <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-                By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
+
+            {/* Footer */}
+            <div className="text-muted-foreground text-center text-xs text-balance">
+                By clicking continue, you agree to our{" "}
+                <a href="#" className="underline underline-offset-4">
+                    Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="#" className="underline underline-offset-4">
+                    Privacy Policy
+                </a>
+                .
             </div>
         </div>
-    )
+    );
 }

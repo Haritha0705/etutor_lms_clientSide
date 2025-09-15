@@ -1,16 +1,18 @@
 "use client";
 
-import { LoginForm } from '@/components/login-form'
+import {LoginForm} from '@/components/login-form'
 import {useRouter} from "next/navigation";
 import React, {useState} from "react";
 import {useLogin} from "@/hooks/useAuth";
 import {LoginModel, LoginResponse} from "@/types/auth.types";
+import {Role} from "@/enum/role.enum";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
     const router = useRouter();
     const [form, setForm] = useState({ email: "", password: "" });
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const [selectedRole, setSelectedRole] = useState<"student" | "instructor" | "admin">("student");
+    const [selectedRole, setSelectedRole] = useState<Role>(Role.STUDENT);
     const login = useLogin();
 
     const validateForm = () => {
@@ -42,14 +44,23 @@ export default function LoginPage() {
 
         try {
             const res:LoginResponse = await login.mutateAsync(reqLoginBody)
-            localStorage.setItem("accessToken", res.token.accessToken);
-            localStorage.setItem("refreshToken", res.token.refreshToken);
+
+            Cookies.set("accessToken", res.token.accessToken, { path: "/" });
+            Cookies.set("refreshToken", res.token.refreshToken, { path: "/" });
+
             alert('Successful')
-            console.log(res)
-            router.push("/");
+            // Redirect based on role
+            if (selectedRole === 'student') router.push("/");
+            else if (selectedRole === 'instructor') router.push("/instructor/dashboard");
+            else router.push("/admin/dashboard");
+
         }catch (err:any) {
             alert(err.response?.data?.message || "Something went wrong!");
         }
+    };
+
+    const handleGoogleLogin = () => {
+        window.location.href = `http://localhost:4000/api/v1/auth/google/login`;
     };
 
     return (
@@ -57,16 +68,16 @@ export default function LoginPage() {
             <div className="flex w-full items-center max-w-sm flex-col gap-6">
                 <div className="flex justify-center items-center w-/13 rounded-full border border-black p-1 gap-1">
                     <div
-                        onClick={() => setSelectedRole("student")}
+                        onClick={() => setSelectedRole(Role.STUDENT)}
                         className={`rounded-full py-1 px-4 cursor-pointer ${selectedRole === "student" ? "bg-black text-white" : "bg-transparent text-black"}`}>Student
                     </div>
                     <div
-                        onClick={() => setSelectedRole("instructor")}
+                        onClick={() => setSelectedRole(Role.INSTRUCTOR)}
                         className={`rounded-full py-1 px-4 cursor-pointer ${
                             selectedRole === "instructor" ? "bg-black text-white" : "bg-transparent text-black"}`}>Teacher
                     </div>
                     <div
-                        onClick={() => setSelectedRole("admin")}
+                        onClick={() => setSelectedRole(Role.ADMIN)}
                         className={`rounded-full py-1 px-4 cursor-pointer ${
                             selectedRole === "admin" ? "bg-black text-white" : "bg-transparent text-black"}`}>Admin
                     </div>
@@ -78,6 +89,7 @@ export default function LoginPage() {
                     onSubmit={handleSubmit}
                     loading={login.isPending}
                     role={selectedRole}
+                    handleLogin={handleGoogleLogin}
                 />
             </div>
         </div>
