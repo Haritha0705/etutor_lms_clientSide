@@ -1,11 +1,11 @@
 "use client";
 
-import { RegisterForm } from "@/components/register-form";
+import { RegisterForm } from "@/components/public/register-form";
 import React, { useState } from "react";
 import { useSendOTP, useSignup } from "@/hooks/useAuth";
 import { RegisterModel, RegisterResponse } from "@/types/auth.types";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
+import { setCookie } from "cookies-next";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -57,8 +57,8 @@ export default function RegisterPage() {
                 router.push(`/verify-otp?email=${reqRegisterBody.email}`);
             }else{
                 const res: RegisterResponse = await signup.mutateAsync(reqRegisterBody);
-                Cookies.set("accessToken", res.token.accessToken, { path: "/" });
-                Cookies.set("refreshToken", res.token.refreshToken, { path: "/" });
+                setCookie("accessToken", res.token.accessToken, { path: "/" });
+                setCookie("refreshToken", res.token.refreshToken, { path: "/" });
                 router.push("/");
             }
         } catch (err: any) {

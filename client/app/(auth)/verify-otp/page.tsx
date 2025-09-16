@@ -1,6 +1,6 @@
 "use client";
 
-import SendOTP from "@/components/send-otp";
+import SendOTP from "@/components/public/send-otp";
 import { useVerifyOTP } from "@/hooks/useAuth";
 import { useSearchParams, useRouter } from "next/navigation";
 import Cookies from "js-cookie";

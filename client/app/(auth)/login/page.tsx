@@ -1,12 +1,11 @@
 "use client";
 
-import {LoginForm} from '@/components/login-form'
+import {LoginForm} from '@/components/public/login-form'
 import {useRouter} from "next/navigation";
 import React, {useState} from "react";
 import {useLogin} from "@/hooks/useAuth";
-import {LoginModel, LoginResponse} from "@/types/auth.types";
+import {LoginModel} from "@/types/auth.types";
 import {Role} from "@/enum/role.enum";
-import Cookies from "js-cookie";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -43,16 +42,14 @@ export default function LoginPage() {
         };
 
         try {
-            const res:LoginResponse = await login.mutateAsync(reqLoginBody)
-
-            Cookies.set("accessToken", res.token.accessToken, { path: "/" });
-            Cookies.set("refreshToken", res.token.refreshToken, { path: "/" });
+            await login.mutateAsync(reqLoginBody)
 
             alert('Successful')
             // Redirect based on role
-            if (selectedRole === 'student') router.push("/");
+            if (selectedRole === 'student') router.push("/student/dashboard");
             else if (selectedRole === 'instructor') router.push("/instructor/dashboard");
-            else router.push("/admin/dashboard");
+            else if (selectedRole === 'admin') router.push("/admin/dashboard");
+
 
         }catch (err:any) {
             alert(err.response?.data?.message || "Something went wrong!");

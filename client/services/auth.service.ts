@@ -17,7 +17,8 @@ export const signupUser = async (payload: RegisterModel):Promise<RegisterRespons
 export const loginUser = async (payload: LoginModel):Promise<LoginResponse> => {
     const { data } = await AxiosService.post<LoginResponse>(
         BackendEndpoints.LOGIN_USER,
-        payload)
+        payload,
+        { withCredentials: true })
     return data;
 }
 
