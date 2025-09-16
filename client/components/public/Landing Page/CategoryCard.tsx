@@ -1,28 +1,44 @@
-import React from "react";
+"use client";
 
-interface CategoryCardProps {
+import { Card, CardContent } from "@/components/ui/card";
+import React from "react";
+import Image, {StaticImageData} from "next/image";
+
+export type CategoryCardProps = {
     bgColour: string;
-    img: string;
+    img: string | StaticImageData,
     imgBgColour: string;
     text: string;
     courseCount: string;
-}
+};
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ bgColour, img, imgBgColour, text, courseCount }) => {
+const CategoryCard = ({
+                          bgColour,
+                          img,
+                          imgBgColour,
+                          text,
+                          courseCount,
+                      }: CategoryCardProps) => {
     return (
-        <div
-            className={`${bgColour} w-[220px] flex items-center py-2 px-4 gap-5 shadow-md lg:w-72 lg:py-4 md:w-[260px] md:py-3 rounded-xl`}
+        <Card
+            className={`${bgColour} w-full md:w-[320px] lg:w-80 shadow-md rounded-xl transition-transform hover:scale-105 p-0`}
         >
-            <div
-                className={`px-2 py-2 ${imgBgColour} w-10 h-10 flex justify-center items-center lg:w-16 lg:h-16 md:w-12 md:h-12 rounded-md`}
-            >
-                <img src={img} className="w-8 h-8" alt={`${text} icon`} />
-            </div>
-            <div className="flex flex-col">
-                <h3 className="my-2 text-xs lg:text-[20px] font-semibold">{text}</h3>
-                <p className="text-gray-500 text-xs lg:text-sm">{courseCount} Courses</p>
-            </div>
-        </div>
+            <CardContent className="flex items-center gap-4 sm:gap-5 p-3 sm:p-4">
+                <div
+                    className={`${imgBgColour} flex justify-center items-center rounded-md w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16`}
+                >
+                    <Image src={img} className="w-8 h-8" alt={`${text} icon`} />
+                </div>
+                <div className="flex flex-col">
+                    <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold">
+                        {text}
+                    </h3>
+                    <p className="text-gray-500 text-xs sm:text-sm md:text-base">
+                        {courseCount} Courses
+                    </p>
+                </div>
+            </CardContent>
+        </Card>
     );
 };
 
