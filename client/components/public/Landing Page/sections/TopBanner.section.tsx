@@ -6,11 +6,11 @@ import hero_main from "../../../../public/image/HeroMain.png";
 const TopBannerSection = () => {
     return (
        <section className="flex flex-row items-center justify-between pl-56 w-full bg-gray-300/30">
-           <div className="flex flex-col items-center md:items-start gap-6 text-center md:text-left md:max-w-xl">
-               <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl lg:text-6xl">
+           <div className="flex flex-col items-start gap-6">
+               <h1 className="text-6xl font-bold leading-tight">
                    Learn with experts anytime, anywhere
                </h1>
-               <p className="text-gray-600 text-lg sm:text-xl max-w-md">
+               <p className="text-gray-600 text-lg max-w-md">
                    Our mission is to help people find the best courses online and learn
                    from experts wherever they are.
                </p>
@@ -18,7 +18,7 @@ const TopBannerSection = () => {
                    Create Account <ArrowRight className="w-4 h-4" />
                </Button>
            </div>
-           <div className="w-full md:w-1/2 flex justify-end">
+           <div className="w-full flex justify-end">
                <Image
                   src={hero_main}
                   alt="Hero illustration"

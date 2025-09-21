@@ -1,9 +1,0 @@
-const Courses = () => {
-    return (
-        <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-            <h1>Courses</h1>
-        </div>
-    )
-}
-
-export default Courses

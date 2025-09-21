@@ -34,7 +34,7 @@ const CategorySection = () => {
           <div>
               <p className='text-4xl font-semibold py-10'>Browse top category</p>
           </div>
-          <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+          <div className="grid grid-cols-4 gap-5">
               {categoryCards.map(([bg, imgBg, text, count, img],i) => (
                   <CategoryCard
                       key={i}

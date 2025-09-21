@@ -1,33 +1,38 @@
 "use client";
 
+import img from "../../../../public/image/aboutImg7.jpg"
 import {Card, CardContent} from "@/components/ui/card";
 import {Star} from "lucide-react";
-import Image, {StaticImageData} from "next/image";
+import Image from "next/image";
+import {CategoryNames, CategoryStyles} from "@/enum/category.enum";
 
 type CoursesCardProps = {
-    img: string | StaticImageData,
+    // img: string | StaticImageData,
     category: string,
     text: string,
-    categoryColour: string,
-    categoryTextColour: string,
-    price: string,
-    rating: string,
-    studentCount: string,
+    price?: number,
+    rating: number,
+    studentCount: number,
+    lgDisplay?: string | null,
 };
 
 const CoursesCard = ({
-                         img,
+                         // img,
                          category,
                          text,
-                         categoryColour,
-                         categoryTextColour,
                          price,
                          rating,
                          studentCount,
-
+                         lgDisplay=null
                      }: CoursesCardProps) => {
+    // const { categoryColour,categoryTextColour } = CategoryStyles[category as CategoryNames]
+    const style = CategoryStyles[category as CategoryNames];
+
+    const categoryColour = style?.categoryColour || "bg-gray-200";
+    const categoryTextColour = style?.categoryTextColour || "text-gray-600";
+
     return (
-        <Card className="w-full md:w-[305px] lg:w-[268px] shadow-xl overflow-hidden relative p-0 rounded-none">
+        <Card className={`w-full ${lgDisplay ? lgDisplay : "lg:w-[315px]"} md:w-[305px] shadow-xl overflow-hidden relative p-0 rounded-none`}>
             <div className="relative w-full h-48 sm:h-40 md:h-44 lg:h-52">
                 <Image
                     src={img}
@@ -41,7 +46,7 @@ const CoursesCard = ({
                     <p className={`px-3 py-1 text-xs rounded ${categoryColour} ${categoryTextColour}`}>
                         {category}
                     </p>
-                    <p className="text-orange-500 font-semibold">{price}</p>
+                    <p className="text-orange-500 font-semibold">{`$${price}`}</p>
                 </div>
 
                 <div>

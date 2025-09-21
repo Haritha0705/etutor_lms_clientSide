@@ -2,12 +2,12 @@ import {Button} from "@/components/ui/button";
 
 const BottomBannerSection = () => {
     return (
-        <section className={'bg-gray-900 flex flex-row gap-5 items-center justify-between  py-15 w-full  px-58'}>
+        <section className={'bg-black flex flex-row gap-5 items-center justify-between  py-15 w-full  px-58'}>
             <div className={'text-white flex flex-col gap-10'}>
                 <h1 className={'text-4xl max-w-120  font-semibold'}>Start learning with 67.1k students around the world.</h1>
                 <div className={'flex gap-5'}>
-                    <Button className={'justify-center'}>Join the Family</Button>
-                    <Button className={'text-white justify-center'}>Browse all courses</Button>
+                    <Button className={'justify-center bg-white text-black'}>Join the Family</Button>
+                    <Button className={'text-white justify-center border border-white'}>Browse all courses</Button>
                 </div>
             </div>
             <div className={'text-white flex gap-5'}>

@@ -10,7 +10,7 @@ import Image from "next/image";
 
 const TrustedCompaniesSection = () => {
     const companyLogos = [Logo1,Logo2,Logo3,Logo4,Logo5,Logo6,Logo7,Logo8]
-    const companyList: React.JSX.Element[] = companyLogos.map((logo,index) =>(
+    const companyList = companyLogos.map((logo, index) =>(
         <div key={index} className={'shadow bg-white py-5 px-10'}>
             <Image src={logo} alt={"company Logos"}/>
         </div>

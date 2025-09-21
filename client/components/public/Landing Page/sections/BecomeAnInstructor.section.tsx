@@ -22,7 +22,7 @@ const BecomeAnInstructorSection = () => {
     return (
         <section className="relative w-full flex flex-col items-center justify-between px-52 pt-16 pb-96">
             {/* Top Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 relative w-full">
+            <div className="grid grid-cols-2 gap-10 relative w-full">
                 {/* Cover Image */}
                 <Image
                     src={coverImg}

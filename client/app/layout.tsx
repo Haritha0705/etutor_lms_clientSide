@@ -32,7 +32,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <QueryProvider>
-          { token && <NavBar/>}
+          { token && <div className={'mb-[120px]'}><NavBar/></div>}
           {children}
           { token && <Footer/>}
         </QueryProvider>

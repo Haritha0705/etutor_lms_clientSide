@@ -21,7 +21,7 @@ export default function Footer() {
 
     return (
         <>
-            <footer className="bg-gray-900 w-full relative flex px-16 py-12 flex-wrap gap-10">
+            <footer className="bg-black w-full relative flex px-16 py-12 flex-wrap gap-10">
                 {/* Top border */}
                 <div className="absolute w-full h-[0.5px] bg-gray-100/30 top-0 left-0" />
                 <div className="absolute w-full h-[0.5px] bg-gray-100/30 bottom-0 left-0" />
@@ -80,7 +80,7 @@ export default function Footer() {
             </footer>
 
             {/* Bottom section */}
-            <div className="py-5 px-16 bg-gray-900 flex flex-wrap gap-5 items-center justify-between">
+            <div className="py-5 px-16 bg-black flex flex-wrap gap-5 items-center justify-between">
                 <p className="text-gray-400 text-sm">
                     © 2021 - Eduflex. Designed by <span className="text-white">Templatecookie</span>. All rights reserved.
                 </p>
