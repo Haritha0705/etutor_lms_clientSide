@@ -1,16 +1,21 @@
-import {useQuery} from "@tanstack/react-query";
-import {CoursesResponse} from "@/types/course.types";
-import {fineAllCourses} from "@/services/course.service";
-import {BackendEndpoints} from "@/lib/constants";
-import {keepPreviousData} from "@tanstack/query-core";
+import { useQuery } from "@tanstack/react-query";
+import { CoursesResponse } from "@/types/course.types";
+import { findAllCourses } from "@/services/course.service";
+import { BackendEndpoints } from "@/lib/constants";
 
 type APIError = { message: string };
 
-export const useCourse = (params: { page: number; limit: number }) => {
+interface FindAllCoursesParams {
+    page: number;
+    limit: number;
+    categories?: string[];
+    tools?: string[];
+}
+
+export const useCourse = (params: FindAllCoursesParams) => {
     return useQuery<CoursesResponse, APIError>({
-        queryKey: [BackendEndpoints.GET_ALL_COURSES, params],
-        queryFn: () => fineAllCourses(params),
-        placeholderData: keepPreviousData,
+        queryKey: [BackendEndpoints.GET_ALL_COURSES_With_Filter, params],
+        queryFn: () => findAllCourses(params),
         staleTime: 1000 * 60 * 5,
     });
 };

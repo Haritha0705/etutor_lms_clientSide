@@ -1,6 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
-import {fineAllCategory} from "@/services/filter.service";
-import {Category} from "@/types/course.types";
+import {fineAllCategory, fineAllTools} from "@/services/filter.service";
+import {Category, Tool} from "@/types/course.types";
 
 type APIError = { message: string };
 
@@ -15,3 +15,14 @@ export const useCategories = () => {
         retry: 1,
     });
 };
+
+export const useTools = () => {
+    return useQuery<Tool[], APIError>({
+        queryKey: ["tools"],
+        queryFn: async () => {
+            const res = await fineAllTools();
+            return res.data || [];
+        },
+    });
+};
+

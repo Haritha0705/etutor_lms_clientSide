@@ -1,82 +1,58 @@
 "use client";
 
-import React, {useState} from "react";
-import {ArrowBigDown, ArrowLeft, ArrowRight, Filter, Search} from "lucide-react";
-import CoursesCard from "@/components/public/Landing Page/cards/CoursesCards";
-import {useCourse} from "@/hooks/useCourse";
-import {MainFilter} from "@/enum/category.enum";
-import {useCategories} from "@/hooks/useFilter";
+import React, { useState } from "react";
+import { useCourse } from "@/hooks/useCourse";
+import {DurationFilter, LevelFilter, MainFilter, PriceFilter, RatingFilter} from "@/enum/category.enum";
+import { useCategories, useTools } from "@/hooks/useFilter";
 import CategoriesFilter from "@/components/public/Course Page/categories.filter";
+import TopFilters from "@/components/public/Course Page/topFilters";
+
+import CoursesCard from "@/components/public/Landing Page/cards/CoursesCards";
+import { ChevronDown, ChevronUp, ArrowLeft, ArrowRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import ToolFilter from "@/components/public/Course Page/tool.filter";
+import ToolsFilter from "@/components/public/Course Page/tool.filter";
 
 const Courses = () => {
-
     const [isVisible, setIsVisible] = useState(false);
     const [page, setPage] = useState(1);
     const [openSub, setOpenSub] = useState<number | null>(null);
-    const [selectedToolIndex, setSelectedToolIndex] = useState<number | null>(null);
+    const [openTool, setOpenTool] = useState<number | null>(null);
+    const [clickCount, setClickCount] = useState(0);
 
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [selectedTools, setSelectedTools] = useState<string[]>([]);
 
-    const { data, error, isLoading, isFetching } = useCourse({
+    const { data: allCourses, error, isLoading, isFetching } = useCourse({
         page,
-        limit: 10,
+        limit: 8,
+        categories: selectedCategories,
+        tools: selectedTools,
     });
-    const { data: subCategories } = useCategories()
 
-    if (isLoading) return <p>Loading courses...</p>;
-    if (error) return <p className="text-red-500">Error: {error.message}</p>;
+    const { data: subCategories } = useCategories();
+    const { data: tools } = useTools();
 
     const toggleSub = (index: number) => setOpenSub(openSub === index ? null : index);
+    const toggleTool = (index: number) => setOpenTool(openTool === index ? null : index);
+
+    if (error) return <p className="text-red-500">Error: {error.message}</p>;
+
+    const totalPages = allCourses?.meta?.totalPages || 1;
 
     return (
-        <div className="pb-20 px-8 w-full">
+        <div className="pb-2 px-10 w-full">
             {/* Top Filters */}
-            <div className="relative">
-                <div className="absolute w-full h-[0.1rem] bg-gray-400/30 bottom-5 left-0 right-0"></div>
-                <div className="flex justify-between py-5">
-                    <div className="flex gap-x-6">
-                        <button
-                            onClick={() => setIsVisible(!isVisible)}
-                            className="flex items-center justify-between px-6 border w-[160px] h-[40px] text-base border-orange-500/30 text-orange-500 hover:bg-orange-100"
-                        >
-                            <Filter className="w-5 h-5 mr-2"/>
-                            <span className="flex-1 text-left">Filter</span>
-                            <span className="ml-2 bg-orange-500 w-6 h-6 flex items-center justify-center text-white text-[10px]">
-                                {/*12 add number of filter count*/}
-                                12
-                            </span>
-                        </button>
-                        <div className="relative flex items-center">
-                            <input
-                                className="border pr-4 pl-10 py-2 rounded w-64 text-sm border-gray-200"
-                                placeholder="UI/UX Design"
-                            />
-                            <Search className="w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"/>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-x-3">
-                        <span>Sort by:</span>
-                        <div className="relative flex items-center">
-                            <input
-                                className="border px-4 py-2 rounded w-44 pr-10 text-sm border-gray-400"
-                                placeholder="Trending"
-                            />
-                            <ArrowBigDown className="w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex gap-x-3 justify-between items-center pb-10">
-                    <div className="flex gap-x-3">
-                        <span className="text-gray-500">Suggestion:</span>
-                        <p className="text-orange-500">test</p>
-                    </div>
-                    <p className="text-gray-500">
-                        <span className="text-black">test</span> results found for{" "}
-                        <span className="text-gray-500">test</span>
-                    </p>
-                </div>
-            </div>
+            <TopFilters
+                filterCount={clickCount}
+                suggestion="UI/UX Design"
+                resultsCount={allCourses?.meta?.totalCount || 0}
+                keyword="UI/UX Design"
+                isVisible={isVisible}
+                onToggle={() => setIsVisible(!isVisible)}
+            />
 
             <div className="flex gap-6">
                 {/* Filter Sidebar */}
@@ -84,65 +60,163 @@ const Courses = () => {
                     <div className="w-64 flex-shrink-0 h-auto max-h-[calc(100vh-200px)] overflow-y-auto">
                         {MainFilter.map((category, index) => (
                             <div key={index} className="mb-2 border overflow-hidden shadow-sm rounded">
-                                {/* Main Category Button */}
-                                <button
+                                <Button
                                     onClick={() => toggleSub(index)}
-                                    className="w-full text-left flex items-center justify-between py-4 px-2 bg-white rounded hover:bg-gray-100 focus:outline-none"
+                                    className="bg-white w-full text-left flex items-center justify-between py-6 px-4 rounded hover:bg-gray-100 focus:outline-none"
                                 >
                                     <span className="text-black text-xl">{category.label}</span>
-                                    <svg
-                                        className={`w-5 h-5 transform ${openSub === index ? "rotate-180" : ""}`}
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
+                                    {openSub === index ? (
+                                        <ChevronUp className="!w-6 !h-6 text-black" />
+                                    ) : (
+                                        <ChevronDown className="!w-6 !h-6 text-black" />
+                                    )}
+                                </Button>
 
-                                {/* Conditional content based on index */}
                                 {openSub === index && (
                                     <div>
-                                        {index === 0 && <CategoriesFilter subCategories={subCategories}/>}
-                                        {index === 1 && (
+                                        {index === 0 && (
+                                            <CategoriesFilter
+                                                subCategories={subCategories}
+                                                setCount={setClickCount}
+                                                selectedCategories={selectedCategories}
+                                                setSelectedCategories={setSelectedCategories}
+                                            />
+                                        )}
+                                        {index === 1 && tools && tools.length > 0 && (
+                                                <ToolsFilter
+                                                    tools={tools}
+                                                    setCount={setClickCount}
+                                                    selectedTools={selectedTools}
+                                                    setSelectedTools={setSelectedTools}
+                                                />
+                                        )}
+                                        {index === 2 && tools && tools.length > 0 && (
                                             <>
-                                                {tools?.map((tool, toolIndex) => (
-                                                    <div key={toolIndex} className="mb-1">
-                                                        <span className="flex items-center text-md pl-2">
-                                                          <span
-                                                              onClick={() => setSelectedToolIndex(toolIndex)}
-                                                              className={`cursor-pointer ${
-                                                                  selectedToolIndex === toolIndex
-                                                                      ? "text-orange-500"
-                                                                      : "text-gray-600"
-                                                              }`}
-                                                          >
-                                                            {tool.name}
-                                                          </span>
-                                                        </span>
+                                                {RatingFilter.map((rating, ratingIndex) => (
+                                                    <div
+                                                        key={ratingIndex}
+                                                        className="flex items-center justify-between p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                    >
+                                                        <div
+                                                            className="flex items-center space-x-2 cursor-pointer"
+                                                            onClick={() => toggleTool(ratingIndex)}
+                                                        >
+                                                            <Label
+                                                                htmlFor={`rating-${ratingIndex}`}
+                                                                className={`flex items-center text-md pl-2 cursor-pointer ${
+                                                                    openTool === ratingIndex ? "text-orange-500" : "text-gray-800"
+                                                                }`}
+                                                            >
+                                                                <Input
+                                                                    type="checkbox"
+                                                                    className="mr-2 w-4 h-4"
+                                                                    id={`rating-${ratingIndex}`}
+                                                                    checked={selectedTools.includes(rating.name)}
+                                                                    onChange={() => handleToolSelect(rating.name)}
+                                                                />
+                                                                {rating.name}
+                                                            </Label>
+                                                        </div>
+                                                        <span className="text-sm">{rating.coursesCount}</span>
                                                     </div>
                                                 ))}
                                             </>
                                         )}
-                                        {index === 2 && (
-                                            <div className="p-2 text-gray-700">
-                                                <p>2</p>
-                                            </div>
+                                        {index === 3 && tools && tools.length > 0 && (
+                                            <>
+                                                {LevelFilter.map((level, levelIndex) => (
+                                                    <div
+                                                        key={levelIndex}
+                                                        className="flex items-center justify-between p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                    >
+                                                        <div
+                                                            className="flex items-center space-x-2 cursor-pointer"
+                                                            onClick={() => toggleTool(levelIndex)}
+                                                        >
+                                                            <Label
+                                                                htmlFor={`level-${levelIndex}`}
+                                                                className={`flex items-center text-md pl-2 cursor-pointer ${
+                                                                    openTool === levelIndex ? "text-orange-500" : "text-gray-800"
+                                                                }`}
+                                                            >
+                                                                <Input
+                                                                    type="checkbox"
+                                                                    className="mr-2 w-4 h-4"
+                                                                    id={`level-${levelIndex}`}
+                                                                    checked={selectedTools.includes(level.name)}
+                                                                    onChange={() => handleToolSelect(level.name)}
+                                                                />
+                                                                {level.name}
+                                                            </Label>
+                                                        </div>
+                                                        <span className="text-sm">{level.coursesCount}</span>
+                                                    </div>
+                                                ))}
+                                            </>
                                         )}
-                                        {index === 3 && (
-                                            <div className="p-2 text-gray-700">
-                                                <p>3</p>
-                                            </div>
+                                        {index === 4 && tools && tools.length > 0 && (
+                                            <>
+                                                {PriceFilter.map((price, priceIndex) => (
+                                                    <div
+                                                        key={priceIndex}
+                                                        className="flex items-center justify-between p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                    >
+                                                        <div
+                                                            className="flex items-center space-x-2 cursor-pointer"
+                                                            onClick={() => toggleTool(priceIndex)}
+                                                        >
+                                                            <Label
+                                                                htmlFor={`price-${priceIndex}`}
+                                                                className={`flex items-center text-md pl-2 cursor-pointer ${
+                                                                    openTool === priceIndex ? "text-orange-500" : "text-gray-800"
+                                                                }`}
+                                                            >
+                                                                <Input
+                                                                    type="checkbox"
+                                                                    className="mr-2 w-4 h-4"
+                                                                    id={`price-${priceIndex}`}
+                                                                    checked={selectedTools.includes(price.name)}
+                                                                    onChange={() => handleToolSelect(price.name)}
+                                                                />
+                                                                {price.name}
+                                                            </Label>
+                                                        </div>
+                                                        <span className="text-sm">{price.coursesCount}</span>
+                                                    </div>
+                                                ))}
+                                            </>
                                         )}
-                                        {index === 4 && (
-                                            <div className="p-2 text-gray-700">
-                                                <p>4</p>
-                                            </div>
-                                        )}
-                                        {index === 5 && (
-                                            <div className="p-2 text-gray-700">
-                                                <p>5</p>
-                                            </div>
+                                        {index === 5 && tools && tools.length > 0 && (
+                                            <>
+                                                {DurationFilter.map((duration, durationIndex) => (
+                                                    <div
+                                                        key={durationIndex}
+                                                        className="flex items-center justify-between p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                    >
+                                                        <div
+                                                            className="flex items-center space-x-2 cursor-pointer"
+                                                            onClick={() => toggleTool(durationIndex)}
+                                                        >
+                                                            <Label
+                                                                htmlFor={`duration-${durationIndex}`}
+                                                                className={`flex items-center text-md pl-2 cursor-pointer ${
+                                                                    openTool === durationIndex ? "text-orange-500" : "text-gray-800"
+                                                                }`}
+                                                            >
+                                                                <Input
+                                                                    type="checkbox"
+                                                                    className="mr-2 w-4 h-4"
+                                                                    id={`duration-${durationIndex}`}
+                                                                    checked={selectedTools.includes(duration.name)}
+                                                                    onChange={() => handleToolSelect(duration.name)}
+                                                                />
+                                                                {duration.name}
+                                                            </Label>
+                                                        </div>
+                                                        <span className="text-sm">{duration.coursesCount}</span>
+                                                    </div>
+                                                ))}
+                                            </>
                                         )}
                                     </div>
                                 )}
@@ -151,54 +225,54 @@ const Courses = () => {
                     </div>
                 )}
 
-
                 {/* Course Cards Grid */}
                 <div className={`grid gap-6 ${isVisible ? "grid-cols-4" : "grid-cols-5"} w-full`}>
-                    {data?.data?.map((course, index) => (
-                        <div key={index}>
-                            <CoursesCard
-                                category={course.category.name}
-                                text={course.description}
-                                price={course.price}
-                                rating={course.averageRating}
-                                studentCount={course.enrollmentCount}
-                                lgDisplay={isVisible ? "lg:w-[322px]" : "lg:w-[308px]"}
-                            />
-                        </div>
-                    ))}
+                    {isLoading ? (
+                        <p className="col-span-full text-center text-lg">Loading courses...</p>
+                    ) : allCourses?.data.length > 0 ? (
+                        allCourses?.data?.map((course, index) => (
+                            <div key={index}>
+                                <CoursesCard
+                                    category={course.category?.name}
+                                    text={course.description}
+                                    price={course.price}
+                                    rating={course.averageRating}
+                                    studentCount={course.enrollmentCount}
+                                    lgDisplay={isVisible ? "lg:w-[322px]" : "lg:w-[308px]"}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <p className="col-span-full text-center text-lg">No courses found.</p>
+                    )}
                 </div>
             </div>
 
-            {/* Pagination (if needed) */}
-            <div className="flex justify-center mt-8 gap-2 items-center">
-                 <button
-                     key={page+1}
-                     onClick={() => setPage((p)=>Math.max(p - 1))}
-                     disabled={page === 1}
-                     className={`p-2 rounded ${
-                         page === page
-                             ? "bg-orange-500 text-white"
-                             : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                     }`}
-                 > <ArrowLeft/>
-                 </button>
-                <span>Page {page} of {data?.meta?.totalPages ?? 1}</span>
-                <button
-                    key={page-1}
-                    onClick={() => setPage((p) => (data?.meta?.totalPages ? Math.min(p + 1, data.meta.totalPages) : p + 1))}
-                    disabled={page === data?.meta?.totalPages}
-                    className={`p-2 rounded ${
-                        page === page
-                            ? "bg-orange-500 text-white"
-                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                ><ArrowRight/>
-                </button>
-                {isFetching && <span className="ml-3 text-sm text-gray-500">Refreshing...</span>}
-            </div>
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex justify-center mt-4 gap-2 items-center">
+                    <button
+                        onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                        disabled={page === 1}
+                        className={`p-2 rounded ${page === 1 ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                    >
+                        <ArrowLeft />
+                    </button>
+
+                    <span>Page {page} of {totalPages}</span>
+
+                    <button
+                        onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                        disabled={page === totalPages}
+                        className={`p-2 rounded ${page === totalPages ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                    >
+                        <ArrowRight />
+                    </button>
+                    {isFetching && <span className="ml-3 text-sm text-gray-500">Refreshing...</span>}
+                </div>
+            )}
         </div>
-    )
-}
+    );
+};
 
-
-export default Courses
+export default Courses;

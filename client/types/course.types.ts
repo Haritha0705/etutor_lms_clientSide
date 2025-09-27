@@ -28,7 +28,7 @@ export type Tool = {
     id: number;
     name: string;
     coursesCount: number;
-    subCategoryId: number;
+    courses: Course[];
 }
 
 export type Course = {
@@ -58,16 +58,22 @@ export type Meta = {
     page: number;
     limit: number;
     totalPages: number;
+    totalCount: number;
 }
 
 export type CoursesResponse = {
     success: boolean;
-    data?: Course[];
+    data: Course[];
     meta?: Meta;
 }
 
 export type CategoriesResponse = {
     success: boolean;
     data?: Category[];
+}
+
+export type ToolsResponse = {
+    success: boolean;
+    data?: Tool[];
 }
 

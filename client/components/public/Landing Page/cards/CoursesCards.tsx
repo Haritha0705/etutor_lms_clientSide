@@ -39,8 +39,7 @@ const CoursesCard = ({
                     alt={`${text} course image`}
                     fill
                     className="object-cover"
-                />
-            </div>
+                /></div>
             <CardContent className="flex flex-col gap-4 px-4">
                 <div className="flex items-center justify-between">
                     <p className={`px-3 py-1 text-xs rounded ${categoryColour} ${categoryTextColour}`}>
